@@ -1,9 +1,3 @@
-"""Shared building blocks: Linear (with named inits), LayerNorm, Attention, Transition.
-
-Write these once, well. If you find yourself writing multi-head attention a
-second time, generalize the first one instead.
-"""
-
 import torch.nn as nn
 
 
@@ -22,4 +16,19 @@ class Linear(nn.Module):
             if bias:
                 nn.init.ones_(self.linear.bias)
 
-# here the def forward is not necessary as we are importing from nn.Module that already dose it by default.
+    def forward(self, x):
+        return self.linear(x)
+
+
+class Transition(nn.Module):
+
+    def __init__(self, in_features, out_features, hid_features):
+        super().__init__()
+        self.norm = nn.LayerNorm(in_features)
+        self.up = Linear(in_features, 2 * hid_features)
+        self.act = nn.SiLU()
+        self.down = Linear(hid_features, out_features, init="final")
+
+    def forward(self, x):
+        gate, value = self.up(self.norm(x)).chunk(2, dim=-1)
+        return x + self.down(self.act(gate) * value)
