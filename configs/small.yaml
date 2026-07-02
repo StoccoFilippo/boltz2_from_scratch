@@ -1,0 +1,9 @@
+# Tiny config for fast fake-data runs. Overrides the dataclass defaults in
+# src/boltz2/config.py with fake-data-sized values so the model runs in
+# milliseconds. Fill in once config.py exists.
+#
+# trunk:
+#   c_s: 16
+#   c_z: 8
+#   n_pairformer_blocks: 2
+#   n_recycles: 1
